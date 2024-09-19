@@ -2,7 +2,11 @@
 #define DICTIONARY_H
 
 #include <stdio.h>
+#include <stdlib.h>
 
-void initializeDataDictionary();
+
+#define EMPTY_POINTER -1
+
+int initializeDataDictionary(const char *dictionaryName);
 
 #endif
