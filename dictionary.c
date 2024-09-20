@@ -21,7 +21,6 @@ int initializeDataDictionary(const char *dictionaryName)
         currentNode.next = EMPTY_POINTER;
         printf("Enter a value for a node #%d: ", counter);
         scanf("%s[^\n]", currentNode.value);
-
         fwrite(&currentNode, sizeof(currentNode), 1, dictionary);
     }
 
