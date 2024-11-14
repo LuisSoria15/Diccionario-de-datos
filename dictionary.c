@@ -1,9 +1,8 @@
 #include "dictionary.h"
 
-int initializeDataDictionary(const char *dictionaryName) 
+FILE* initializeDataDictionary(const char *dictionaryName) 
 {
     long mainHeader = EMPTY_POINTER;
-    int stringsToSave = 0;
 
     printf("Initializing Data Dictionary...\n");
 
@@ -11,19 +10,44 @@ int initializeDataDictionary(const char *dictionaryName)
 
     fwrite(&mainHeader, sizeof(mainHeader), 1, dictionary);
 
-    printf("How many strings woud you like? ");
-    scanf("%d", &stringsToSave);
+    return dictionary;
+}   
 
-    for(int counter = 0; counter <stringsToSave; counter++)
+int appendEntity(FILE *dataDictionary, ENTITY newEntity)
+{
+    fseek(dataDictionary, 0 , SEEK_END);
+
+    long entityDirection = ftell(dataDictionary);
+
+    fwrite(newEntity.name, DATA_BLOCK_SIZE, 1, dataDictionary);
+    fwrite(&newEntity.dataPointer, sizeof(ENTITY), 1, dataDictionary);
+    fwrite(&newEntity.attributesPointer, sizeof(ENTITY), 1, dataDictionary);
+    fwrite(&newEntity.nextEntity, sizeof(ENTITY), 1, dataDictionary);
+
+    return entityDirection;
+}
+
+void reorderEntities(FILE* dataDictionary, ENTITY newEntity, long newEntityDirection)
+{
+    long entityDataPointer = 0;
+    long entityDirection;
+    ENTITY currentEntity;
+    
+    fseek(dataDictionary, 0, SEEK_SET);
+
+    fread(&entityDirection, sizeof(long), 1, dataDictionary);
+
+    while(entityDirection != -1)
     {
-        NODE currentNode;
-
-        currentNode.next = EMPTY_POINTER;
-        printf("Enter a value for a node #%d: ", counter);
-        scanf("%s[^\n]", currentNode.value);
-
-        fwrite(&currentNode, sizeof(currentNode), 1, dictionary);
+        fseek(dataDictionary, entityDirection, SEEK_SET);
+        fread(&currentEntity.name, DATA_BLOCK_SIZE, 1, dataDictionary);
+        fread(&currentEntity.dataPointer, sizeof(long), 1, dataDictionary);
+        fread(&currentEntity.attributesPointer, sizeof(long), 1, dataDictionary);
+        entityDataPointer = ftell(dataDictionary);
+        fread(&currentEntity.nextEntity, sizeof(long), 1, dataDictionary);
+        entityDirection = currentEntity.nextEntity;
     }
 
-    return EXIT_SUCCESS;
-}   
+    fseek(dataDictionary, entityDataPointer, SEEK_SET);
+    fwrite(&newEntityDirection, sizeof(long), 1, dataDictionary);
+}
