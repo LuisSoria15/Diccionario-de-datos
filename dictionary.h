@@ -3,7 +3,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
 
+#define MAIN_ENTITY_POINTER 0
 #define EMPTY_POINTER -1
 #define DATA_BLOCK_SIZE 50
 
@@ -15,11 +18,21 @@ typedef struct Entity
     long nextEntity;
 }ENTITY;
 
-int initializeDataDictionary(const char *dictionaryName);
+typedef struct Attribute
+{
+    char name[DATA_BLOCK_SIZE];
+    bool isPrimary;
+    long type;
+    long size;
+    long nextAttribute;
+}ATTRIBUTE;
+
+FILE* initializeDataDictionary(const char *dictionaryName);
 
 int appendEntity(FILE *dataDictionary, ENTITY newEntity);
-void reorderEntities(FILE* dataDictionary, ENTITY newentity, long newEntityDirection);
+void reorderEntities(FILE* dataDictionary, long currentEntityPointer, const char* NewEntityName, long newEntityDirection);
 
-fclose(data);
+int appendAttribute(FILE *dataDictionary, ATTRIBUTE newAttribute);
+void reorderAttributes(FILE *dataDictionary, long currentAttributePointer, const char*newAttributeName, long newAttributeDirection);
 
 #endif

@@ -5,4 +5,7 @@
 #include <stdlib.h>
 #include "dictionary.h"
 
+void CreteEntity(FILE* dataDictionary);
+void CreateAtribute(FILE* dataDictionary, ENTITY currentEntity);
+
 #endif
